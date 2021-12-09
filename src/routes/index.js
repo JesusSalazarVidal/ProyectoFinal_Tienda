@@ -32,6 +32,10 @@ router.get('/logout', (req, res, next) => {
   req.logout();
   res.redirect('/');
 });
+
+
+
+
 /*
 //todos las rutas debajo estaran dentro de la seguridad de las sessions
 router.use((req, res, next)=>{
