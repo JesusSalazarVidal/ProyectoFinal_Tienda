@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const producto = require('../models/producto');
 
 router.get('/', (req, res, next) => {
   res.render('index');
@@ -34,7 +35,17 @@ router.get('/logout', (req, res, next) => {
 });
 
 
+router.get('/preventas',(req, res, next) =>{
+  res.render('preventas');
+});
 
+router.get('/albums',(req, res, next) =>{
+  res.render('albums');
+});
+
+router.get('/lightsticks',(req, res, next) =>{
+  res.render('lightsticks');
+});
 
 /*
 //todos las rutas debajo estaran dentro de la seguridad de las sessions
@@ -48,40 +59,26 @@ router.get('/profile',isAuthenticated, (req, res, next) => {
 });
 
 //Products
-const Product = require('../models/product');
+const Producto = require('../models/producto');
 
-router.get('/regProduct',isAuthenticated, (req, res, next) => {
-  res.render('registerProducts');
+router.get('/formularioProducto',isAuthenticated, (req, res, next) => {
+  res.render('formularioproducto');
 });
 
-router.post('/add/product', isAuthenticated, async(req, res, next)=>{
-  const { nombre, precio, descripcion } = req.body;
-  console.log(req.body);
-  const errors = [];
-  if (!nombre) {
-    errors.push({ text: "Ingrese nombre del producto" });
-  }
-  if (!precio) {
-    errors.push({ text: "Ingrese Precio del producto" });
-  }
-  if (!descripcion) {
-    errors.push({ text: "Ingrese descripcion del producto" });
-  }
-  if (errors.length > 0) {
-    console.log(errors);
-    res.render("registerProducts", {
-      errors,
-      nombre,
-      precio,
-      descripcion,
-    });
-  } else {
-    const newProduct = new Product({ nombre, precio, descripcion});
-    newProduct.user = req.user.id;
-    await newProduct.save();
-    req.flash("success_msg", "Product Added Successfully");
-    res.redirect("/products");
-  }
+router.post('/agregarProducto', isAuthenticated, async(req, res, next)=>{
+  const produto = new Producto();
+    produto.nombre = req.body.nombre;
+    produto.precio = req.body.precio;
+    produto.cantidad = req.body.cantidad;
+    produto.categoria = req.body.categoria;
+    produto.filename = req.file.filename;
+    produto.path = '/img/uploads/' + req.file.filename;
+    produto.originalname = req.file.originalname;
+    produto.mimetype = req.file.mimetype;
+    produto.size = req.file.size;
+
+    await producto.save();
+    res.redirect('/');
 });
 router.get('/products',isAuthenticated, async(req, res, next) => {
   const products = await Product.find();

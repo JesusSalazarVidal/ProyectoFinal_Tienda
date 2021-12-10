@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const passport = require('passport');
 const session = require('express-session');
 const flash = require('connect-flash');
+const multer = require('multer');
+const uuid = require('uuid');
 
 
 
@@ -44,6 +46,11 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")));
 //Routes
 app.use('/', require('./routes/index'));
+app.use(require('./routes/images.routes'));
+
+app.use((req, res) => {
+  res.render("404");
+});
 
 //Incio de servidor 
 console.log('SERVIDOR EN PUERTO',3000);
