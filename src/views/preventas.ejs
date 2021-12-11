@@ -1,3 +1,33 @@
 <%- layout('layouts/main') %>
-<h3>Prevntas Diciembre</h3>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  
+    <% productos.forEach(producto => { %>
+    <% if(producto.categoria === 'preventas'){ %> 
+    <div style="margin-top: 5%;" class="col">
+      <div class="card text-center">
+        <div class="card text-dark bg-info">
+          <img src="<%= producto.path %>" class="card-img-top" alt="<%= producto.filename %>">
+          <h2 class="card-title align-items-center">
+            <%= producto.nombre%>  
+          </h2>
+          <h2>$<%=producto.precio%> </h2>
+          <% if(producto.cantidad === '0'){ %> 
+            <p>Sold Out</p>
+            <% }else{ %> 
+          <p>Disponibles: <%=producto.cantidad%> piezas</p>
+           <% } %> 
+          <!-- DELETE REQUEST -->
+        
+          <form class="row-sm text-center" action="/deleteProduct/<%=producto._id%>" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="btn btn-danger  btn-lg">Eliminar</button>
+            <a href="/renderProduct/<%=producto._id%>" class="btn btn-secondary btn-lg " role="button" >Actualizar</a>
+          </form>
+        </div>
+      </div>
+    </div>
+    <% } %> 
+    <% }); %> 
+  </div>
+  
 

@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const { unlink } = require('fs-extra');
-const producto = require('../models/producto');
+
 
 
 //Products
 const Producto = require('../models/producto');
-
+const User= require('../models/user');
 router.get('/', (req, res, next) => {
   res.render('index');
 });
@@ -40,17 +40,10 @@ router.get('/logout', (req, res, next) => {
 });
 
 
-router.get('/preventas',(req, res, next) =>{
-  res.render('preventas');
-});
 
 
 
-router.get('/lightsticks', async(req, res, next) =>{
-  const productos = await Producto.find();
-  console.log(productos);
-  res.render('lightsticks');
-});
+
 
 /*
 //todos las rutas debajo estaran dentro de la seguridad de las sessions
@@ -65,8 +58,18 @@ router.get('/profile',isAuthenticated, (req, res, next) => {
 
 
 
-router.get('/formularioProducto',isAuthenticated, (req, res, next) => {
-  res.render('formularioproducto');
+router.get('/formularioProducto/:id',isAuthenticated, async(req, res, next) => {
+  console.log(req.params.id);
+  const user = await User.findById(req.params.id).lean();
+    console.log(user);
+    if (user.email=== 'admin@localhost'){
+      res.render('formularioproducto');
+      
+    }else{
+      res.redirect('/');
+    }
+    
+  
 });
 
 router.post('/registrarProducto', isAuthenticated, async(req, res, next)=>{
@@ -93,13 +96,29 @@ router.get('/albums', async (req, res) => {
 */
 router.get('/albums', async(req, res, next) =>{
   const productos = await Producto.find();
-  console.log(productos);
+  //console.log(productos);
   res.render('albums', {productos});
 });
 
+router.get('/checkout', (req,res,next)=>{
+  res.render('checkout');
+});
+
+router.get('/lightsticks', async(req, res, next) =>{
+  const productos = await Producto.find();
+  //console.log(productos);
+  res.render('lightsticks',{productos});
+});
+router.get('/preventas', async(req, res, next) =>{
+  const productos = await Producto.find();
+  //console.log(productos);
+  res.render('preventas',{productos});
+});
+
+
 router.get('/renderProduct/:id',isAuthenticated, async(req, res)=>{
   console.log(req.params.id);
-  const product = await Product.findById(req.params.id).lean();;
+  const product = await Product.findById(req.params.id).lean();
   console.log(product);
   res.render("editProduct", {product});
 });
@@ -118,6 +137,8 @@ router.post('/deleteProduct/:id',isAuthenticated, async(req,res,netx)=>{
   req.flash("success_msg", "Note Deleted Successfully");
   res.redirect("/products");
 });
+
+
 
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()) {
