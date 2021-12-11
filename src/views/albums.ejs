@@ -1,26 +1,27 @@
 <%- layout('layouts/main')%>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    <% products.forEach(products => { %>
-        
-
-    <div class="col">
-      <div class="card text-center">
-        <div class="card text-dark bg-info">
-          <h1 class="card-title align-items-center">
-            <%= products.nombre%>  
-          </h1>
-          <h2>$<%=  products.precio%> </h2>
-          <p><%=products.descripcion%> </p>
-          <!-- DELETE REQUEST -->
-        
-          <form class="row-sm text-center" action="/deleteProduct/<%=products._id%>" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            <button type="submit" class="btn btn-danger  btn-lg">Eliminar</button>
-            <a href="/renderProduct/<%=products._id%>" class="btn btn-secondary btn-lg " role="button" >Actualizar</a>
-          </form>
-        </div>
+  <% productos.forEach(producto => { %>
+      
+  <div style="margin-top: 5%;" class="col">
+    <div class="card text-center">
+      <div class="card text-dark bg-info">
+        <img src="<%= producto.path %>" class="card-img-top" alt="<%= producto.filename %>">
+        <h2 class="card-title align-items-center">
+          <%= producto.nombre%>  
+        </h2>
+        <h2>$<%=producto.precio%> </h2>
+        <p><%=producto.categoria%> </p>
+        <!-- DELETE REQUEST -->
+      
+        <form class="row-sm text-center" action="/deleteProduct/<%=producto._id%>" method="POST">
+          <input type="hidden" name="_method" value="DELETE">
+          <button type="submit" class="btn btn-danger  btn-lg">Eliminar</button>
+          <a href="/renderProduct/<%=producto._id%>" class="btn btn-secondary btn-lg " role="button" >Actualizar</a>
+        </form>
       </div>
     </div>
-    <% }); %> 
   </div>
+  <% }); %> 
+</div>
+

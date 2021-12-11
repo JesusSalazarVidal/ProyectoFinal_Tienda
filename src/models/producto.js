@@ -3,16 +3,16 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  nombre: String,
-  precio: String,
-  cantidad: String,
-  categoria: String,
-  filename: String,
-  path: String,
-  originalname: String,
-  mimetype: String,
-  size: Number,
-  created_at: {type: Date, default: Date.now()}
+    nombre: {type: String},
+    precio: {type: String},
+    cantidad: {type: String},
+    categoria: {type: String},
+    filename: {type: String},
+    path: {type: String},
+    originalname: {type: String},
+    mimetype: {type: String},
+    size: { type: Number},
+    created_at: {type: Date, default: Date.now()}
 });
 
 module.exports = mongoose.model('producto', userSchema);

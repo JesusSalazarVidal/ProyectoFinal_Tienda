@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const { unlink } = require('fs-extra');
 const producto = require('../models/producto');
+
+
+//Products
+const Producto = require('../models/producto');
 
 router.get('/', (req, res, next) => {
   res.render('index');
@@ -39,11 +44,11 @@ router.get('/preventas',(req, res, next) =>{
   res.render('preventas');
 });
 
-router.get('/albums',(req, res, next) =>{
-  res.render('albums');
-});
 
-router.get('/lightsticks',(req, res, next) =>{
+
+router.get('/lightsticks', async(req, res, next) =>{
+  const productos = await Producto.find();
+  console.log(productos);
   res.render('lightsticks');
 });
 
@@ -58,31 +63,38 @@ router.get('/profile',isAuthenticated, (req, res, next) => {
   res.render('profile');
 });
 
-//Products
-const Producto = require('../models/producto');
+
 
 router.get('/formularioProducto',isAuthenticated, (req, res, next) => {
   res.render('formularioproducto');
 });
 
-router.post('/agregarProducto', isAuthenticated, async(req, res, next)=>{
-  const produto = new Producto();
-    produto.nombre = req.body.nombre;
-    produto.precio = req.body.precio;
-    produto.cantidad = req.body.cantidad;
-    produto.categoria = req.body.categoria;
-    produto.filename = req.file.filename;
-    produto.path = '/img/uploads/' + req.file.filename;
-    produto.originalname = req.file.originalname;
-    produto.mimetype = req.file.mimetype;
-    produto.size = req.file.size;
-
-    await producto.save();
-    res.redirect('/');
+router.post('/registrarProducto', isAuthenticated, async(req, res, next)=>{
+  const producto = new Producto();
+  producto.nombre = req.body.nombre;
+  producto.precio = req.body.precio;
+  producto.cantidad = req.body.cantidad;
+  producto.categoria = req.body.categoria;
+  producto.filename = req.file.filename;
+  producto.path = '/images/uploads/' + req.file.filename;
+  producto.originalname = req.file.originalname;
+  producto.mimetype = req.file.mimetype;
+  producto.size = req.file.size;
+  await producto.save();
+  res.redirect('/');
 });
-router.get('/products',isAuthenticated, async(req, res, next) => {
-  const products = await Product.find();
-  res.render("products", { products });
+
+/*
+router.get('/albums', async (req, res) => {
+  const productos = await Producto.find();
+  console.log(productos);
+  res.render('albums', { productos });
+});
+*/
+router.get('/albums', async(req, res, next) =>{
+  const productos = await Producto.find();
+  console.log(productos);
+  res.render('albums', {productos});
 });
 
 router.get('/renderProduct/:id',isAuthenticated, async(req, res)=>{
