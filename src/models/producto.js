@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
+const productoSchema = new Schema({
     nombre: {type: String},
     precio: {type: String},
     cantidad: {type: String},
@@ -15,4 +15,4 @@ const userSchema = new Schema({
     created_at: {type: Date, default: Date.now()}
 });
 
-module.exports = mongoose.model('producto', userSchema);
+module.exports = mongoose.model('producto', productoSchema);

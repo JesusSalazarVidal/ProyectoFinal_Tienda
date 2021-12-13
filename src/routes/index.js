@@ -87,6 +87,11 @@ router.post('/registrarProducto', isAuthenticated, async(req, res, next)=>{
   res.redirect('/');
 });
 
+
+router.post('/orden',isAuthenticated, async(req,res,next)=>{
+  console.log(req.body.email)
+  res.redirect('checkout')
+})
 /*
 router.get('/albums', async (req, res) => {
   const productos = await Producto.find();
@@ -100,7 +105,7 @@ router.get('/albums', async(req, res, next) =>{
   res.render('albums', {productos});
 });
 
-router.get('/checkout', (req,res,next)=>{
+router.get('/checkout',isAuthenticated, (req,res,next)=>{
   res.render('checkout');
 });
 
