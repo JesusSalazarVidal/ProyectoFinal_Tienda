@@ -6,7 +6,7 @@
     Producto removido!
   </div>
  
-<div style="margin-top: 5%;" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+<div style="margin-top: 5%;" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3">
   <% productos.forEach(producto => { %>
   <% if(producto.categoria === 'lightstick'){ %>
   <div class="col d-flex justify-content-center mb-4">
@@ -14,11 +14,20 @@
       <h5 class="card-title pt-2 text-center text-primary" ><%= producto.nombre%>  </h5>
       <img src="<%= producto.path %>" class="card-img-top" alt="...">
       <div class="card-body">
-        <p class="card-text text-white-50 description">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <p class="card-text text-white-50 description"><%= producto.descripcion %> </p>
         <h5 class="text-primary">Precio: <span class="precio">$<%=producto.precio%></span></h5>
-        <div class="d-grid gap-2">
-        <button  class="btn btn-primary button_comprar">Añadir a Carrito</button>
-      </div>
+        <%if (producto.cantidad > 0){ %> 
+          <h5 class="text-white">Diponibles <span class="precio"> <%=producto.cantidad%></span></h5>
+          <div class="d-grid gap-2">
+            <button  class="btn btn-primary button_comprar">Añadir a Carrito</button>
+          </div>
+        <% }else{ %> 
+          <h5 class="text-danger"><span class="precio">Agotado</span></h5>
+          <div class="d-grid gap-2">
+            <button  class="btn btn-primary button_comprar disabled">Añadir a Carrito</button>
+          </div>
+        <% } %> 
+        
       </div>
     </div>
   </div>

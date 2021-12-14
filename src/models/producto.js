@@ -7,11 +7,9 @@ const productoSchema = new Schema({
     precio: {type: String},
     cantidad: {type: String},
     categoria: {type: String},
-    filename: {type: String},
+    descripcion:{type: String},
     path: {type: String},
-    originalname: {type: String},
-    mimetype: {type: String},
-    size: { type: Number},
+    
     created_at: {type: Date, default: Date.now()}
 });
 

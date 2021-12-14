@@ -65,7 +65,7 @@ app.use('/', require('./routes/index'));
 app.use(require('./routes/images.routes'));
 
 app.use((req, res) => {
-  res.render("404");
+  res.render("index");
 });
 
 //Incio de servidor 

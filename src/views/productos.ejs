@@ -1,0 +1,29 @@
+<%- layout('layouts/main')%>
+
+<div style="margin-top: 5%;" class="row row-cols-sm-1 row-cols-md- row-cols-lg- row-cols-xl-3">
+  <% productos.forEach(producto => { %>
+  <div class="col d-flex justify-content-center mb-4" >
+    <div class="card shadow mb-1 bg-dark rounded" style="width: 20rem;" data-id="<%= producto._id %> ">
+    <input  name="id" type="hidden" value="<%= producto._id %> ">
+      <h5 class="card-title pt-2 text-center text-primary"><%= producto.nombre%>  </h5>
+      <img src="<%= producto.path %>" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text text-white-50 description"><%= producto.descripcion %> </p>
+        <h5 class="text-primary">Precio: <span class="precio">$<%=producto.precio%></span></h5>
+        <%if (producto.cantidad > 0){ %> 
+            <h5 class="text-white">Diponibles: <span class="precio"> <%=producto.cantidad%></span></h5>
+        <% }else{ %> 
+            <h5 class="text-danger"><span class="precio">Agotado</span></h5>
+        <% } %> 
+        <div class="d-grid gap-2">
+        <a href="/editarProducto/<%= producto._id %> "  class="btn btn-primary ">Editar</a>
+        <form class="row-sm text-center" action="/eliminarProducto/<%= producto._id %>" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn btn-danger  btn-lg">Eliminar</button>
+        
+      </div>
+      </div>
+    </div>
+  </div>
+  <% }); %>
+</div>

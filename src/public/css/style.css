@@ -1,8 +1,9 @@
 body {
-  
-    background-color: #85FFBD;
-    background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
-    
+  background-color: #D9AFD9;
+  background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%);
+
+ 
+    font-family: 'Lobster', cursive;
    
 
   }
@@ -68,4 +69,20 @@ header, .alert{
 }
 .hide, .remove{
   display: none;
+}
+
+.registrarProducto{
+  margin-left: 4%;
+  margin-right: 4%;
+  margin-top: 4%;
+  margin-bottom: 4%;
+  background-color: cornsilk;
+}
+
+.form-body{
+  background-color: #C28DEA;
+  border-radius: 5px;
+}
+.form-gruop{
+  margin-top: 2%;
 }

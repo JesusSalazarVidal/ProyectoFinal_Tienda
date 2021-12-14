@@ -23,7 +23,7 @@ function GuardarOrdenDB() {
         return result.json();
       })
       .then((res) => console.log(res))
-      .then(tbody.innerHTML = '');
+      .then(localStorage.clear());
   }
 
 

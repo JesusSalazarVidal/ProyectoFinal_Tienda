@@ -5,27 +5,41 @@ const { unlink } = require('fs-extra');
 
 
 
-//Products
+//importar los modelos 
 const Producto = require('../models/producto');
 const User= require('../models/user');
+
+
+//renderizar la ventanas 
+//index
 router.get('/', (req, res, next) => {
   res.render('index');
 });
 
+//------------------METODOS GET PARA LA SESION DEL USUARIO--------------------------
 router.get('/signup', (req, res, next) => {
   res.render('signup');
 });
+
+router.get('/signin', (req, res, next) => {
+  res.render('signin');
+});
+
+router.get('/logout', (req, res, next) => {
+  req.logout();
+  res.redirect('/');
+});
+router.get('/profile',isAuthenticated, (req, res, next) => {
+  res.render('profile');
+});
+
+//-----------------------METODOS POST PARA LAS SESIONES ---------------------
 
 router.post('/signup', passport.authenticate('local-signup', {
   successRedirect: '/profile',
   failureRedirect: '/signup',
   passReqToCallback: true
 })); 
-
-router.get('/signin', (req, res, next) => {
-  res.render('signin');
-});
-
 
 router.post('/signin', passport.authenticate('local-signin', {
   successRedirect: '/profile',
@@ -34,79 +48,34 @@ router.post('/signin', passport.authenticate('local-signin', {
 }));
 
 
-router.get('/logout', (req, res, next) => {
-  req.logout();
-  res.redirect('/');
-});
+
+//------------------------METODOS GET PARA LOS PRODUCTOS----------------
 
 
-
-
-
-
-
-/*
-//todos las rutas debajo estaran dentro de la seguridad de las sessions
-router.use((req, res, next)=>{
-  isAuthenticated(req, res, next);
-  next();
-});
-*/
-router.get('/profile',isAuthenticated, (req, res, next) => {
-  res.render('profile');
-});
-
-
-
-router.get('/formularioProducto/:id',isAuthenticated, async(req, res, next) => {
-  console.log(req.params.id);
-  const user = await User.findById(req.params.id).lean();
-    console.log(user);
-    if (user.email=== 'admin@localhost'){
-      res.render('formularioproducto');
-      
-    }else{
-      res.redirect('/');
-    }
-    
+router.get('/formularioProducto',isAuthenticated, async(req, res, next) => {
+  const user = await User.findById(req.session.passport.user).lean();
+  if(user.email === 'admin@localhost'){
+    res.render('formularioproducto');
+  }else{
+    res.redirect('/');
+  }
   
 });
 
-router.post('/registrarProducto', isAuthenticated, async(req, res, next)=>{
-  const producto = new Producto();
-  producto.nombre = req.body.nombre;
-  producto.precio = req.body.precio;
-  producto.cantidad = req.body.cantidad;
-  producto.categoria = req.body.categoria;
-  producto.filename = req.file.filename;
-  producto.path = '/images/uploads/' + req.file.filename;
-  producto.originalname = req.file.originalname;
-  producto.mimetype = req.file.mimetype;
-  producto.size = req.file.size;
-  await producto.save();
-  res.redirect('/');
+router.get('/productos',isAuthenticated, async(req, res, next) => {
+  const user = await User.findById(req.session.passport.user).lean();
+  if(user.email === 'admin@localhost'){
+    const productos = await Producto.find();
+    res.render('productos', {productos});
+  }else{
+    res.redirect('/');
+  }
 });
 
-
-router.post('/orden',isAuthenticated, async(req,res,next)=>{
-  console.log(req.body.email)
-  res.redirect('checkout')
-})
-/*
-router.get('/albums', async (req, res) => {
-  const productos = await Producto.find();
-  console.log(productos);
-  res.render('albums', { productos });
-});
-*/
 router.get('/albums', async(req, res, next) =>{
   const productos = await Producto.find();
   //console.log(productos);
   res.render('albums', {productos});
-});
-
-router.get('/checkout',isAuthenticated, (req,res,next)=>{
-  res.render('checkout');
 });
 
 router.get('/lightsticks', async(req, res, next) =>{
@@ -114,34 +83,73 @@ router.get('/lightsticks', async(req, res, next) =>{
   //console.log(productos);
   res.render('lightsticks',{productos});
 });
+
 router.get('/preventas', async(req, res, next) =>{
   const productos = await Producto.find();
   //console.log(productos);
   res.render('preventas',{productos});
 });
 
-
-router.get('/renderProduct/:id',isAuthenticated, async(req, res)=>{
-  console.log(req.params.id);
-  const product = await Product.findById(req.params.id).lean();
-  console.log(product);
-  res.render("editProduct", {product});
+router.get('/checkout',isAuthenticated, (req,res,next)=>{
+  res.render('checkout');
 });
 
-router.post('/updateProduct/:id',isAuthenticated, async(req,res,next)=>{
+router.get('/editarProducto/:id',isAuthenticated, async(req, res)=>{
   console.log(req.params.id);
-  const { nombre, precio, descripcion } = req.body;
-  await Product.findByIdAndUpdate(req.params.id, { nombre, precio, descripcion });
-  req.flash("success_msg", "Note Updated Successfully");
-  res.redirect("/products");
+  const producto = await Producto.findById(req.params.id).lean();
+  console.log(producto);
+  res.render("formularioEditar", {producto});
 });
 
-router.post('/deleteProduct/:id',isAuthenticated, async(req,res,netx)=>{
+
+
+
+
+
+
+
+//-------------------METODOS POST PARA LOS PRODUCTOS------------------------------
+
+
+router.post('/registrarProducto', isAuthenticated, async(req, res, next)=>{
+  const user = await User.findById(req.session.passport.user).lean();
+  if(user.email === 'admin@localhost'){
+    const producto = new Producto();
+    producto.nombre = req.body.nombre;
+    producto.precio = req.body.precio;
+    producto.cantidad = req.body.cantidad;
+    producto.descripcion = req.body.descripcion;
+    producto.categoria = req.body.categoria;
+    producto.path = '/images/uploads/' + req.file.filename;
+    await producto.save();
+    req.flash("success_msg", "Producto Agregado");
+    res.redirect('productos');
+  }else{
+    res.redirect('/');
+  }
+});
+
+router.post('/actualizarProducto/:id',isAuthenticated, async(req,res,next)=>{
   console.log(req.params.id);
-  await Product.findByIdAndDelete(req.params.id);
+  const path = '/images/uploads/' + req.file.filename;
+  const { nombre, precio, cantidad, descripcion, categoria} = req.body;
+  await Producto.findByIdAndUpdate(req.params.id, { nombre, precio, cantidad, descripcion,categoria, path});
+  res.redirect("/productos");
+});
+
+
+
+router.post('/eliminarProducto/:id',isAuthenticated, async(req,res,netx)=>{
+  console.log(req.params.id);
+  await Producto.findByIdAndDelete(req.params.id);
   req.flash("success_msg", "Note Deleted Successfully");
-  res.redirect("/products");
+  res.redirect("/productos");
 });
+
+router.post('/orden',isAuthenticated, async(req,res,next)=>{
+  console.log(req.body.email)
+  res.redirect('checkout')
+})
 
 
 
